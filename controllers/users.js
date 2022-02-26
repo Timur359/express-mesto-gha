@@ -14,6 +14,9 @@ const getProfile = (req, res, next) => {
   userSchema
     .findById(req.params.userId)
     .then((user) => {
+      if (user === null) {
+        res.send({ message: "Пользователь не найден !" });
+      }
       res.status(200).send({ data: user });
     })
     .catch((err) => {
