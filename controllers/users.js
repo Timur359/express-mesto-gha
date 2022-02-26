@@ -1,5 +1,11 @@
 const userSchema = require("../models/user");
 
+const {
+  ERROR_CODE_400,
+  ERROR_CODE_404,
+  ERROR_CODE_500,
+} = require("../errors/const");
+
 const getUsers = (req, res, next) => {
   userSchema
     .find()
@@ -34,11 +40,6 @@ const createUsers = (req, res, next) => {
     .save()
     // eslint-disable-next-line consistent-return
     .then((result) => {
-      if (!result) {
-        return res
-          .status(400)
-          .send({ message: "Введите необходимые данные !" });
-      }
       res.status(200).send({ data: result });
     })
     .catch((err) => {
