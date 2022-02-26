@@ -35,7 +35,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use("/", usersRoutes);
 app.use("/", cardsRoutes);
 app.use("*", (req, res) => {
-  res.status(400).send("Страница не найдена");
+  res.status(404).send({ message: "Страница не найдена" });
 });
 
 app.get("/", (req, res) => {

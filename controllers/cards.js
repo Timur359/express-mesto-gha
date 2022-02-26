@@ -30,11 +30,15 @@ const createCard = (req, res, next) => {
 const deleteCard = (req, res, next) => {
   cardSchema
     .findByIdAndDelete(req.params.cardId)
+    // eslint-disable-next-line consistent-return
     .then((result) => {
+      if (!result) {
+        return res.status(404).send({ message: "Карточка не найдена !" });
+      }
       res.status(200).send({ data: result });
     })
     .catch((err) => {
-      res.status(404).send({ message: "Карточка не найдена !" });
+      res.status(400).send({ message: "Карточка не найдена !" });
       next(err);
     });
 };
@@ -47,11 +51,15 @@ const likeCard = (req, res, next) => {
       // eslint-disable-next-line comma-dangle
       { new: true }
     )
+    // eslint-disable-next-line consistent-return
     .then((result) => {
+      if (!result) {
+        return res.status(404).send({ message: "Карточка не найдена !" });
+      }
       res.status(200).send({ data: result });
     })
     .catch((err) => {
-      res.status(404).send({ message: "Карточка не найдена !" });
+      res.status(400).send({ message: "Карточка не найдена !" });
       next(err);
     });
 };
@@ -64,7 +72,11 @@ const dislikeCard = (req, res, next) => {
       // eslint-disable-next-line comma-dangle
       { new: true }
     )
+    // eslint-disable-next-line consistent-return
     .then((result) => {
+      if (!result) {
+        return res.status(404).send({ message: "Карточка не найден !" });
+      }
       res.status(200).send({ data: result });
     })
     .catch((err) => {
