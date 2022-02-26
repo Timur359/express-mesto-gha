@@ -1,18 +1,29 @@
+/* eslint-disable new-cap */
+/* eslint-disable comma-dangle */
+/* eslint-disable consistent-return */
+
 const cardSchema = require("../models/card");
+
+const {
+  ERROR_CODE_400,
+  ERROR_CODE_404,
+  ERROR_CODE_500,
+} = require("../errors/const");
 
 const getCards = (req, res, next) => {
   cardSchema
     .find()
     .then((users) => res.status(200).send(users))
     .catch((err) => {
-      res.status(500).send({ message: "Произошла непредвиденная ошибка =(" });
+      res
+        .status(ERROR_CODE_500)
+        .send({ message: "Произошла непредвиденная ошибка =(" });
       next(err);
     });
 };
 
 const createCard = (req, res, next) => {
   const { name, link } = req.body;
-  // eslint-disable-next-line new-cap
   const card = new cardSchema({ name, link });
   card
     .save()
@@ -20,7 +31,7 @@ const createCard = (req, res, next) => {
       res.status(200).send({ data: result });
     })
     .catch((err) => {
-      res.status(400).send({
+      res.status(ERROR_CODE_400).send({
         message: "Введите необходимые данные. Все поля должны быть корректны !",
       });
       next(err);
@@ -30,15 +41,16 @@ const createCard = (req, res, next) => {
 const deleteCard = (req, res, next) => {
   cardSchema
     .findByIdAndDelete(req.params.cardId)
-    // eslint-disable-next-line consistent-return
     .then((result) => {
       if (!result) {
-        return res.status(404).send({ message: "Карточка не найдена !" });
+        return res
+          .status(ERROR_CODE_404)
+          .send({ message: "Карточка не найдена !" });
       }
       res.status(200).send({ data: result });
     })
     .catch((err) => {
-      res.status(400).send({ message: "Карточка не найдена !" });
+      res.status(ERROR_CODE_400).send({ message: "Карточка не найдена !" });
       next(err);
     });
 };
@@ -48,18 +60,18 @@ const likeCard = (req, res, next) => {
     .findByIdAndUpdate(
       req.params.cardId,
       { $addToSet: { likes: req.user._id } },
-      // eslint-disable-next-line comma-dangle
       { new: true }
     )
-    // eslint-disable-next-line consistent-return
     .then((result) => {
       if (!result) {
-        return res.status(404).send({ message: "Карточка не найдена !" });
+        return res
+          .status(ERROR_CODE_404)
+          .send({ message: "Карточка не найдена !" });
       }
       res.status(200).send({ data: result });
     })
     .catch((err) => {
-      res.status(400).send({ message: "Карточка не найдена !" });
+      res.status(ERROR_CODE_400).send({ message: "Карточка не найдена !" });
       next(err);
     });
 };
@@ -69,18 +81,18 @@ const dislikeCard = (req, res, next) => {
     .findByIdAndUpdate(
       req.params.cardId,
       { $pull: { likes: req.user._id } },
-      // eslint-disable-next-line comma-dangle
       { new: true }
     )
-    // eslint-disable-next-line consistent-return
     .then((result) => {
       if (!result) {
-        return res.status(404).send({ message: "Карточка не найден !" });
+        return res
+          .status(ERROR_CODE_404)
+          .send({ message: "Карточка не найден !" });
       }
       res.status(200).send({ data: result });
     })
     .catch((err) => {
-      res.status(400).send({ message: "Карточка не найдена !" });
+      res.status(ERROR_CODE_400).send({ message: "Карточка не найдена !" });
       next(err);
     });
 };

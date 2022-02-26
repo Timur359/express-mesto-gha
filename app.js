@@ -1,3 +1,5 @@
+/* eslint-disable no-console */
+
 const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
@@ -12,13 +14,10 @@ const db = "mongodb://localhost:27017/mestodb";
 
 mongoose
   .connect(db, { useNewUrlParser: true, useUnifiedTopology: true })
-  // eslint-disable-next-line no-console
   .then(() => console.log("Connected to DB"))
-  // eslint-disable-next-line no-console
   .catch((error) => console.log(error));
 
 app.listen(PORT, () => {
-  // eslint-disable-next-line no-console
   console.log(`listening port ${PORT}`);
 });
 
