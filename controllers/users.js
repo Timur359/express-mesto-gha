@@ -16,11 +16,12 @@ const getProfile = (req, res, next) => {
     // eslint-disable-next-line consistent-return
     .then((user) => {
       if (!user) {
-        return res.status(400).send({ message: "Пользователь не найден !" });
+        return res.status(404).send({ message: "Пользователь не найден !" });
       }
       res.status(200).send({ data: user });
     })
     .catch((err) => {
+      res.status(400).send({ message: "Пользователь не найден !" });
       next(err);
     });
 };

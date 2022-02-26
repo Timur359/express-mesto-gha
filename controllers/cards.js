@@ -31,10 +31,10 @@ const deleteCard = (req, res, next) => {
   cardSchema
     .findByIdAndDelete(req.params.cardId)
     .then((result) => {
-      res.status(200).send(`Карточка ${result.name} удалена !`);
+      res.status(200).send({ data: result });
     })
     .catch((err) => {
-      res.status(400).send({ message: "Карточка не найдена !" });
+      res.status(404).send({ message: "Карточка не найдена !" });
       next(err);
     });
 };
@@ -51,7 +51,7 @@ const likeCard = (req, res, next) => {
       res.status(200).send({ data: result });
     })
     .catch((err) => {
-      res.status(400).send({ message: "Карточка не найдена !" });
+      res.status(404).send({ message: "Карточка не найдена !" });
       next(err);
     });
 };
