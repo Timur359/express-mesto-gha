@@ -32,12 +32,18 @@ const createUsers = (req, res, next) => {
   const user = new userSchema({ name, about, avatar });
   user
     .save()
+    // eslint-disable-next-line consistent-return
     .then((result) => {
+      if (!result) {
+        return res
+          .status(400)
+          .send({ message: "Введите необходимые данные !" });
+      }
       res.status(200).send({ data: result });
     })
     .catch((err) => {
       res.status(400).send({
-        message: "Введите необходимые данные. Все поля должны быть корректны !",
+        message: "Все поля должны быть корректны !",
       });
       next(err);
     });
