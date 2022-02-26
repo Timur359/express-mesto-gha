@@ -11,11 +11,14 @@ const db = "mongodb://localhost:27017/mestodb";
 
 mongoose
   .connect(db, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then((res) => console.log("Connected to DB"))
+  // eslint-disable-next-line no-console
+  .then(() => console.log("Connected to DB"))
+  // eslint-disable-next-line no-console
   .catch((error) => console.log(error));
 
-app.listen(PORT, (error) => {
-  error ? console.log(error) : console.log(`listening port ${PORT}`);
+app.listen(PORT, () => {
+  // eslint-disable-next-line no-console
+  console.log(`listening port ${PORT}`);
 });
 
 app.use((req, res, next) => {
