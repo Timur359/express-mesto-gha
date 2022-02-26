@@ -1,5 +1,6 @@
 const express = require("express");
 const mongoose = require("mongoose");
+const bodyParser = require("body-parser");
 
 const usersRoutes = require("./routes/users");
 const cardsRoutes = require("./routes/cards");
@@ -28,12 +29,15 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(express.json());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
-app.use(usersRoutes);
+app.use("/", usersRoutes);
+app.use("/", cardsRoutes);
+app.use("*", (req, res, next) => {
+  next("Страница не найдена");
+});
 
 app.get("/", (req, res) => {
   res.redirect("http://localhost:3000/users");
 });
-
-app.use(cardsRoutes);

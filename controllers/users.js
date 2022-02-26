@@ -29,7 +29,7 @@ const createUsers = (req, res, next) => {
   user
     .save()
     .then((result) => {
-      res.status(200).send(`Пользователь ${result.name} добавлен !`);
+      res.status(200).send({ data: result });
     })
     .catch((err) => {
       res.status(400).send({
