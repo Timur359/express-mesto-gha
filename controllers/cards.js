@@ -17,7 +17,7 @@ const createCard = (req, res, next) => {
   card
     .save()
     .then((result) => {
-      res.status(200).send(`Карточка ${result.name} создана !`);
+      res.status(200).send({ data: result });
     })
     .catch((err) => {
       res.status(400).send({
@@ -34,7 +34,7 @@ const deleteCard = (req, res, next) => {
       res.status(200).send(`Карточка ${result.name} удалена !`);
     })
     .catch((err) => {
-      res.status(404).send({ message: "Карточка не найдена !" });
+      res.status(400).send({ message: "Карточка не найдена !" });
       next(err);
     });
 };
@@ -48,10 +48,10 @@ const likeCard = (req, res, next) => {
       { new: true }
     )
     .then((result) => {
-      res.status(200).send(`Лайк карточке ${result.name} поставлен !`);
+      res.status(200).send({ data: result });
     })
     .catch((err) => {
-      res.status(404).send({ message: "Карточка не найдена !" });
+      res.status(400).send({ message: "Карточка не найдена !" });
       next(err);
     });
 };
@@ -65,10 +65,10 @@ const dislikeCard = (req, res, next) => {
       { new: true }
     )
     .then((result) => {
-      res.status(200).send(`Лайк карточке ${result.name} удалён !`);
+      res.status(200).send({ data: result });
     })
     .catch((err) => {
-      res.status(404).send({ message: "Карточка не найдена !" });
+      res.status(400).send({ message: "Карточка не найдена !" });
       next(err);
     });
 };

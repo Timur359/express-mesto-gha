@@ -13,14 +13,14 @@ const getUsers = (req, res, next) => {
 const getProfile = (req, res, next) => {
   userSchema
     .findById(req.params.userId)
+    // eslint-disable-next-line consistent-return
     .then((user) => {
-      if (user === null) {
-        res.send({ message: "Пользователь не найден !" });
+      if (!user) {
+        return res.status(400).send({ message: "Пользователь не найден !" });
       }
       res.status(200).send({ data: user });
     })
     .catch((err) => {
-      res.status(404).send({ message: "Пользователь не найден !" });
       next(err);
     });
 };
@@ -45,9 +45,14 @@ const createUsers = (req, res, next) => {
 const editUserProfile = (req, res, next) => {
   const { name, about } = req.body;
   userSchema
-    .findByIdAndUpdate(req.user._id, { name, about })
+    .findByIdAndUpdate(
+      req.user._id,
+      { name, about },
+      // eslint-disable-next-line comma-dangle
+      { new: true, runValidators: true }
+    )
     .then((result) => {
-      res.status(200).send(`Пользователь ${result.name} изменён !`);
+      res.status(200).send({ data: result });
     })
     .catch((err) => {
       res.status(400).send({ message: "Все поля должны быть корректны !" });
@@ -58,9 +63,14 @@ const editUserProfile = (req, res, next) => {
 const editUserAvatar = (req, res, next) => {
   const { avatar } = req.body;
   userSchema
-    .findByIdAndUpdate(req.user._id, { avatar })
+    .findByIdAndUpdate(
+      req.user._id,
+      { avatar },
+      // eslint-disable-next-line comma-dangle
+      { new: true, runValidators: true }
+    )
     .then((result) => {
-      res.status(200).send(`Аватар пользователя ${result.name} изменён !`);
+      res.status(200).send({ data: result });
     })
     .catch((err) => {
       res.status(400).send({ message: "Все поля должны быть корректны !" });
