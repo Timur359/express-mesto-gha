@@ -1,99 +1,95 @@
-/* eslint-disable new-cap */
 /* eslint-disable comma-dangle */
-/* eslint-disable consistent-return */
 
-const cardSchema = require("../models/card");
+const Card = require("../models/card");
 
 const {
   ERROR_CODE_400,
   ERROR_CODE_404,
-  ERROR_CODE_500,
+  hiddenError,
 } = require("../errors/const");
 
-const getCards = (req, res, next) => {
-  cardSchema
-    .find()
+const getCards = (req, res) => {
+  Card.find()
     .then((users) => res.status(200).send(users))
-    .catch((err) => {
-      res
-        .status(ERROR_CODE_500)
-        .send({ message: "Произошла непредвиденная ошибка =(" });
-      next(err);
+    .catch(() => {
+      hiddenError(res);
     });
 };
 
-const createCard = (req, res, next) => {
+const createCard = (req, res) => {
   const { name, link } = req.body;
-  const card = new cardSchema({ name, link });
+  const card = new Card({ name, link });
   card
     .save()
     .then((result) => {
       res.status(200).send({ data: result });
     })
     .catch((err) => {
-      res.status(ERROR_CODE_400).send({
-        message: "Введите необходимые данные. Все поля должны быть корректны !",
-      });
-      next(err);
+      if (err.name === "ValidationError") {
+        res.status(ERROR_CODE_400).send({ message: "Некорректные данные" });
+      }
     });
 };
 
-const deleteCard = (req, res, next) => {
-  cardSchema
-    .findByIdAndDelete(req.params.cardId)
+const deleteCard = (req, res) => {
+  Card.findByIdAndDelete(req.params.cardId)
     .then((result) => {
       if (!result) {
-        return res
-          .status(ERROR_CODE_404)
-          .send({ message: "Карточка не найдена !" });
+        res.status(ERROR_CODE_404).send({ message: "Карточка не найдена !" });
+      } else {
+        res.status(200).send({ data: result });
       }
-      res.status(200).send({ data: result });
     })
     .catch((err) => {
-      res.status(ERROR_CODE_400).send({ message: "Карточка не найдена !" });
-      next(err);
+      if (err.name === "CastError") {
+        res.status(ERROR_CODE_400).send({ message: "Невалидный id " });
+      } else {
+        hiddenError(err);
+      }
     });
 };
 
-const likeCard = (req, res, next) => {
-  cardSchema
-    .findByIdAndUpdate(
-      req.params.cardId,
-      { $addToSet: { likes: req.user._id } },
-      { new: true }
-    )
+const likeCard = (req, res) => {
+  Card.findByIdAndUpdate(
+    req.params.cardId,
+    { $addToSet: { likes: req.user._id } },
+    { new: true }
+  )
     .then((result) => {
       if (!result) {
-        return res
-          .status(ERROR_CODE_404)
-          .send({ message: "Карточка не найдена !" });
+        res.status(ERROR_CODE_404).send({ message: "Карточка не найдена !" });
+      } else {
+        res.status(200).send({ data: result });
       }
-      res.status(200).send({ data: result });
     })
     .catch((err) => {
-      res.status(ERROR_CODE_400).send({ message: "Карточка не найдена !" });
-      next(err);
+      if (err.name === "CastError") {
+        res.status(ERROR_CODE_400).send({ message: "Невалидный id " });
+      } else {
+        hiddenError(err);
+      }
     });
 };
 
-const dislikeCard = (req, res, next) => {
-  cardSchema
-    .findByIdAndUpdate(
-      req.params.cardId,
-      { $pull: { likes: req.user._id } },
-      { new: true }
-    )
+const dislikeCard = (req, res) => {
+  Card.findByIdAndUpdate(
+    req.params.cardId,
+    { $pull: { likes: req.user._id } },
+    { new: true }
+  )
     .then((result) => {
       if (!result) {
-        return res
-          .status(ERROR_CODE_404)
-          .send({ message: "Карточка не найден !" });
+        res.status(ERROR_CODE_404).send({ message: "Карточка не найден !" });
+      } else {
+        res.status(200).send({ data: result });
       }
-      res.status(200).send({ data: result });
     })
     .catch((err) => {
-      res.status(ERROR_CODE_400).send({ message: "Карточка не найдена !" });
-      next(err);
+      if (err.name === "CastError") {
+        res.status(ERROR_CODE_400).send({ message: "Невалидный id " });
+      } else {
+        hiddenError(err);
+      }
     });
 };
 
