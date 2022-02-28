@@ -28,6 +28,8 @@ const createCard = (req, res) => {
     .catch((err) => {
       if (err.name === "ValidationError") {
         res.status(ERROR_CODE_400).send({ message: "Некорректные данные" });
+      } else {
+        hiddenError(err);
       }
     });
 };
