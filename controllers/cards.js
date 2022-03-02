@@ -6,7 +6,8 @@ const {
   ERROR_CODE_400,
   ERROR_CODE_404,
   hiddenError,
-} = require("../errors/const");
+} = require("../errors/hiddenError");
+const { notFoundError } = require("../errors/notFoundError");
 
 const getCards = (req, res) => {
   Card.find()
@@ -19,11 +20,9 @@ const getCards = (req, res) => {
 const createCard = (req, res) => {
   const { name, link } = req.body;
   const owner = req.user._id;
-  const card = new Card({ name, link, owner });
-  card
-    .save()
-    .then((result) => {
-      res.status(200).send({ data: result });
+  Card.create({ name, link, owner })
+    .then((card) => {
+      res.status(200).send({ data: card });
     })
     .catch((err) => {
       if (err.name === "ValidationError") {
@@ -35,19 +34,21 @@ const createCard = (req, res) => {
 };
 
 const deleteCard = (req, res) => {
-  Card.findByIdAndDelete(req.params.cardId)
-    .then((result) => {
-      if (!result) {
-        res.status(ERROR_CODE_404).send({ message: "Карточка не найдена !" });
+  const owner = req.user._id;
+  Card.findOne({ _id: req.params.cardId })
+    .orFail(() => notFoundError(res, "Карточка не найдена"))
+    .then((card) => {
+      if (!card.owner.equals(owner)) {
+        res.status(400).send("Нет прав на удаление этой карточки !");
       } else {
-        res.status(200).send({ data: result });
+        Card.deleteOne(card).then(() => res.status(200).send({ data: card }));
       }
     })
     .catch((err) => {
       if (err.name === "CastError") {
         res.status(ERROR_CODE_400).send({ message: "Невалидный id " });
       } else {
-        hiddenError(err);
+        hiddenError(res);
       }
     });
 };

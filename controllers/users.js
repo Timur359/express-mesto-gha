@@ -1,12 +1,19 @@
+/* eslint-disable function-paren-newline */
+/* eslint-disable implicit-arrow-linebreak */
+/* eslint-disable consistent-return */
+/* eslint-disable object-curly-newline */
 /* eslint-disable comma-dangle */
 
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 const User = require("../models/user");
 
 const {
   ERROR_CODE_400,
   ERROR_CODE_404,
   hiddenError,
-} = require("../errors/const");
+} = require("../errors/hiddenError");
+const { notFoundError } = require("../errors/notFoundError");
 
 const getUsers = (req, res) => {
   User.find()
@@ -36,20 +43,58 @@ const getProfile = (req, res) => {
     });
 };
 
+const getMyProfile = (req, res) => {
+  User.findById(req.user._id)
+    .then((user) => {
+      if (!user) {
+        notFoundError(res, "Данные пользователя не найдены");
+      }
+      res.status(200).send(user);
+    })
+    .catch(() => hiddenError(res, "Произошла непредвиденная ошибка"));
+};
+
 const createUsers = (req, res) => {
-  const { name, about, avatar } = req.body;
-  const user = new User({ name, about, avatar });
-  user
-    .save()
-    .then((result) => {
-      res.status(200).send({ data: result });
+  const { name, about, avatar, email, password } = req.body;
+  if (!email || !password) {
+    notFoundError(res, "Не переданы email или пароль");
+  }
+  bcrypt
+    .hash(password, 10)
+    .then((hash) =>
+      User.create({
+        name,
+        about,
+        avatar,
+        email,
+        password: hash,
+      })
+    )
+    .then((user) => {
+      res.status(200).send({ data: user });
     })
     .catch((err) => {
-      if (err.name === "ValidationError") {
-        res.status(ERROR_CODE_400).send({ message: "Некорректные данные" });
+      if (err.name === "MongoServerError" && err.code === 11000) {
+        res
+          .status(409)
+          .send({ message: "Пользователь с данным email уже зарегестрирован" });
       } else {
         hiddenError(res);
       }
+    });
+};
+
+const loginUser = (req, res) => {
+  const { email, password } = req.body;
+  User.findUserByCredentials(email, password)
+    .then((user) => {
+      const token = jwt.sign({ _id: user._id }, "some-secret-key", {
+        expiresIn: "7d",
+      });
+      return res.status(200).send({ token });
+    })
+    .catch((err) => {
+      res.status(401).send({ message: err.message });
     });
 };
 
@@ -97,4 +142,6 @@ module.exports = {
   createUsers,
   editUserProfile,
   editUserAvatar,
+  loginUser,
+  getMyProfile,
 };

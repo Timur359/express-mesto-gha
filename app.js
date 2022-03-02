@@ -6,6 +6,8 @@ const bodyParser = require("body-parser");
 
 const usersRoutes = require("./routes/users");
 const cardsRoutes = require("./routes/cards");
+const auth = require("./middlewars/auth");
+const { createUsers, loginUser } = require("./controllers/users");
 
 const app = express();
 
@@ -17,26 +19,18 @@ mongoose
   .then(() => console.log("Connected to DB"))
   .catch((error) => console.log(error));
 
-app.listen(PORT, () => {
-  console.log(`listening port ${PORT}`);
-});
-
-app.use((req, res, next) => {
-  req.user = {
-    _id: "6218c9107a3977e8b015698f",
-  };
-  next();
-});
-
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.use("/", usersRoutes);
-app.use("/", cardsRoutes);
+app.post("/signup", createUsers);
+app.post("/signin", loginUser);
+
+app.use("/", auth, usersRoutes);
+app.use("/", auth, cardsRoutes);
 app.use("*", (req, res) => {
   res.status(404).send({ message: "Страница не найдена" });
 });
 
-app.get("/", (req, res) => {
-  res.redirect("http://localhost:3000/users");
+app.listen(PORT, () => {
+  console.log(`Listening port ${PORT}`);
 });
