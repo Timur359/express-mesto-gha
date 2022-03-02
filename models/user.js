@@ -1,3 +1,4 @@
+/* eslint-disable operator-linebreak */
 /* eslint-disable consistent-return */
 const bcrypt = require("bcryptjs");
 const mongoose = require("mongoose");
