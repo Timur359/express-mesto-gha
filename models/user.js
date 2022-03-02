@@ -1,12 +1,9 @@
-/* eslint-disable operator-linebreak */
-/* eslint-disable consistent-return */
 const bcrypt = require("bcryptjs");
 const mongoose = require("mongoose");
 
 const isEmail = require("validator/lib/isEmail");
 
-const regex =
-  /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\\+~#=]+\.[a-zA-Z0-9()]+([-a-zA-Z0-9()@:%_\\+.~#?&/=#]*)/;
+const regex = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\\+~#=]+\.[a-zA-Z0-9()]+([-a-zA-Z0-9()@:%_\\+.~#?&/=#]*)/;
 
 const userSchema = new mongoose.Schema({
   name: {

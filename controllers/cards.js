@@ -1,5 +1,3 @@
-/* eslint-disable comma-dangle */
-
 const Card = require("../models/card");
 
 const {
@@ -57,7 +55,7 @@ const likeCard = (req, res) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $addToSet: { likes: req.user._id } },
-    { new: true }
+    { new: true },
   )
     .then((result) => {
       if (!result) {
@@ -79,7 +77,7 @@ const dislikeCard = (req, res) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $pull: { likes: req.user._id } },
-    { new: true }
+    { new: true },
   )
     .then((result) => {
       if (!result) {
