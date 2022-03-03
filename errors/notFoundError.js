@@ -1,7 +1,8 @@
-const notFoundError = (res, text) => {
-  res.status(404).send({ message: text });
-};
+class NotFoundError extends Error {
+  constructor(message) {
+    super(message);
+    this.statusCode = 404;
+  }
+}
 
-module.exports = {
-  notFoundError,
-};
+module.exports = NotFoundError;
