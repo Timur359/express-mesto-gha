@@ -5,7 +5,6 @@ const router = express.Router();
 
 const {
   getCards,
-  getCard,
   createCard,
   deleteCard,
   likeCard,
@@ -13,15 +12,6 @@ const {
 } = require("../controllers/cards");
 
 router.get("/cards", getCards);
-router.get(
-  "/cards/:cardId",
-  celebrate({
-    body: Joi.object().keys({
-      cardId: Joi.string().required().length(24).hex(),
-    }),
-  }),
-  getCard,
-);
 router.post(
   "/cards",
   celebrate({

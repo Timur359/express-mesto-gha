@@ -1,3 +1,5 @@
+/* eslint-disable consistent-return */
+
 const Card = require("../models/card");
 const ForbiddenError = require("../errors/forbiddenError");
 const NotFoundError = require("../errors/notFoundError");
@@ -7,21 +9,6 @@ const getCards = (req, res, next) => {
   Card.find()
     .then((cards) => res.status(200).send(cards))
     .catch((err) => next(err));
-};
-
-const getCard = (req, res, next) => {
-  Card.findOne({ _id: req.params.cardId })
-    .orFail(() => new NotFoundError("Карточка с таким id не найдена"))
-    .then((card) => {
-      res.status(200).send({ card });
-    })
-    .catch((err) => {
-      if (err.kind === "ObjectId") {
-        next(new ValidationError("Невалидный id карточки"));
-      } else {
-        next(err);
-      }
-    });
 };
 
 const createCard = (req, res, next) => {
@@ -40,7 +27,7 @@ const deleteCard = (req, res, next) => {
       if (!card.owner.equals(owner)) {
         next(new ForbiddenError("Нет прав на удаление этой карточки"));
       } else {
-        Card.deleteOne(card).then(() => res.status(200).send({ data: card }));
+        return Card.deleteOne(card).then(() => res.status(200).send({ data: card }));
       }
     })
     .catch((err) => {
@@ -86,7 +73,6 @@ const dislikeCard = (req, res, next) => {
 
 module.exports = {
   getCards,
-  getCard,
   createCard,
   deleteCard,
   likeCard,

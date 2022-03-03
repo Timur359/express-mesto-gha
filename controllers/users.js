@@ -1,9 +1,11 @@
+/* eslint-disable consistent-return */
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/user");
 const NotFoundError = require("../errors/notFoundError");
 const ConflictError = require("../errors/conflictError");
 const ValidationError = require("../errors/validationError");
+const AuthError = require("../errors/authError");
 
 const getUsers = (req, res, next) => {
   User.find()
@@ -28,8 +30,9 @@ const getMyProfile = (req, res, next) => {
     .then((user) => {
       if (!user) {
         next(new NotFoundError("Данные пользователя не найдены"));
+      } else {
+        res.status(200).send(user);
       }
-      res.status(200).send(user);
     })
     .catch((err) => next(err));
 };
@@ -39,7 +42,7 @@ const createUsers = (req, res, next) => {
     name, about, avatar, email, password,
   } = req.body;
   if (!email || !password) {
-    next(new ValidationError("Не переданы email или пароль"));
+    return next(new ValidationError("Не переданы email или пароль"));
   }
   bcrypt
     .hash(password, 10)
@@ -55,9 +58,7 @@ const createUsers = (req, res, next) => {
     })
     .catch((err) => {
       if (err.code === 11000) {
-        next(
-          new ConflictError("Пользователь с данным email уже зарегистрирован"),
-        );
+        next(new ConflictError("Пользователь с данным email уже зарегистрирован"));
       } else {
         next(err);
       }
@@ -67,7 +68,7 @@ const createUsers = (req, res, next) => {
 const loginUser = (req, res, next) => {
   const { email, password } = req.body;
   if (!email || !password) {
-    next(new ValidationError("Неверный пароль или email!"));
+    return next(new ValidationError("Неверный пароль или email!"));
   }
   User.findUserByCredentials(email, password)
     .then((user) => {
@@ -76,8 +77,8 @@ const loginUser = (req, res, next) => {
       });
       return res.status(200).send({ token });
     })
-    .catch((err) => {
-      next(err);
+    .catch(() => {
+      next(new AuthError("Неверный логин или пароль"));
     });
 };
 
@@ -91,8 +92,9 @@ const editUserProfile = (req, res, next) => {
     .then((user) => {
       if (!user) {
         next(new ValidationError("Переданы не корректные данные"));
+      } else {
+        res.status(200).send({ data: user });
       }
-      res.status(200).send({ data: user });
     })
     .catch((err) => next(err));
 };
@@ -107,8 +109,9 @@ const editUserAvatar = (req, res, next) => {
     .then((user) => {
       if (!user) {
         next(new ValidationError("Переданы не корректные данные"));
+      } else {
+        res.status(200).send({ data: user });
       }
-      res.status(200).send({ data: user });
     })
     .catch((err) => next(err));
 };
