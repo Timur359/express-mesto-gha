@@ -1,6 +1,7 @@
 /* eslint-disable consistent-return */
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+
 const User = require("../models/user");
 const NotFoundError = require("../errors/notFoundError");
 const ConflictError = require("../errors/conflictError");
