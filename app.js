@@ -23,9 +23,9 @@ mongoose
   .catch((error) => console.log(error));
 
 const whitelist = [
-  'http://localhost:3001',
-  'https://nox-mesto.nomoredomains.monster',
-  'http://nox-mesto.nomoredomains.monster',
+  'http://localhost:3000',
+  'https://express.mesto.nomoredomains.work',
+  'http://express.mesto.nomoredomains.work',
 ];
 const corsOptions = {
   origin: whitelist,
