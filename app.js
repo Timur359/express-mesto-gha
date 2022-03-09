@@ -2,6 +2,7 @@
 
 const express = require("express");
 const mongoose = require("mongoose");
+const cors = require("cors");
 const bodyParser = require("body-parser");
 const { errors, celebrate, Joi } = require("celebrate");
 
@@ -20,6 +21,17 @@ mongoose
   .connect(db, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log("Connected to DB"))
   .catch((error) => console.log(error));
+
+const whitelist = [
+  'http://localhost:3001',
+  'https://nox-mesto.nomoredomains.monster',
+  'http://nox-mesto.nomoredomains.monster',
+];
+const corsOptions = {
+  origin: whitelist,
+};
+
+app.use(cors(corsOptions));
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
