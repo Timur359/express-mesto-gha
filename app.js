@@ -20,6 +20,8 @@ const app = express();
 const PORT = 3000;
 const db = "mongodb://localhost:27017/mestodb";
 
+console.log(process.env.NODE_ENV)
+
 mongoose
   .connect(db, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log("Connected to DB"))

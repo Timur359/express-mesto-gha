@@ -8,8 +8,6 @@ const AuthError = require("../errors/authError");
 module.exports = (req, res, next) => {
   const { authorization } = req.headers;
 
-  console.log(process.env.NODE_ENV)
-
   if (!authorization || !authorization.startsWith("Bearer ")) {
     return next(new AuthError("Необходимо авторизоваться"));
   }
