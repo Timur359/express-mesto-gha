@@ -91,8 +91,6 @@ app.use((err, req, res, next) => {
   next();
 });
 
-console.log(process.env.NODE_ENV)
-
 app.listen(PORT, () => {
   console.log(`Listening port ${PORT}`);
 });
